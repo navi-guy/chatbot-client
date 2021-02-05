@@ -24,12 +24,17 @@ $(document).ready(function () {
   // $("#userInput").prop('disabled', true);
 
   //global variables
+  cid = random(0, 100).toString();
   action_name = "action_greet_user";
-  sender_id = "jitesh97";
+  sender_id = "jitesh"+cid;
 
   //if you want the bot to start the conversation
   // custom_action_trigger();
 });
+
+function random(min, max) {
+    return Math.floor((Math.random() * (max - min + 1)) + min);
+}
 
 // ========================== restart conversation ========================
 function restartConversation() {
