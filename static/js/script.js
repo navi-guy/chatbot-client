@@ -1,3 +1,9 @@
+// CONSTANTS
+
+const URL_API = "http://34.121.32.194:5005";
+//const URL_API = "http://localhost:5005";
+
+
 //Bot pop-up intro
 document.addEventListener("DOMContentLoaded", function () {
   var elemsTap = document.querySelector(".tap-target");
@@ -59,7 +65,7 @@ function restartConversation() {
 function action_trigger() {
   // send an event to the bot, so that bot can start the conversation by greeting the user
   $.ajax({
-    url: `http://34.121.32.194:5005/conversations/${sender_id}/execute`,
+    url: `${URL_API}/conversations/${sender_id}/execute`,
     type: "POST",
     contentType: "application/json",
     data: JSON.stringify({
@@ -88,7 +94,7 @@ function action_trigger() {
 function custom_action_trigger() {
   // send an event to the bot, so that bot can start the conversation by greeting the user
   $.ajax({
-    url: `http://34.121.32.194:5055/webhook/`,
+    url: `${URL_API}/webhook/`,
     type: "POST",
     contentType: "application/json",
     data: JSON.stringify({
@@ -125,7 +131,7 @@ $(".usrInput").on("keyup keypress", function (e) {
       return false;
     } else {
       //destroy the existing chart, if yu are not using charts, then comment the below lines
-      $(".collapsible").remove();
+ /*     $(".collapsible").remove();
       if (typeof chatChart !== "undefined") {
         chatChart.destroy();
       }
@@ -133,7 +139,7 @@ $(".usrInput").on("keyup keypress", function (e) {
       $(".chart-container").remove();
       if (typeof modalChart !== "undefined") {
         modalChart.destroy();
-      }
+      } */
 
       $("#paginated_cards").remove();
       $(".suggestions").remove();
@@ -149,18 +155,19 @@ $(".usrInput").on("keyup keypress", function (e) {
 
 $("#sendButton").on("click", function (e) {
   var text = $(".usrInput").val();
+  console.log(text);
   if (text == "" || $.trim(text) == "") {
     e.preventDefault();
     return false;
   } else {
     //destroy the existing chart
-
+    /*
     chatChart.destroy();
     $(".chart-container").remove();
     if (typeof modalChart !== "undefined") {
       modalChart.destroy();
     }
-
+    */
     $(".suggestions").remove();
     $("#paginated_cards").remove();
     $(".quickReplies").remove();
@@ -197,7 +204,7 @@ function scrollToBottomOfResults() {
 //============== send the user message to rasa server =============================================
 function send(message) {
   $.ajax({
-    url: "http://34.121.32.194:5005/webhooks/rest/webhook",
+     url: `${URL_API}/webhooks/rest/webhook`,
     type: "POST",
     contentType: "application/json",
     data: JSON.stringify({ message: message, sender: sender_id }),
@@ -209,7 +216,7 @@ function send(message) {
         $("#userInput").prop("disabled", false);
 
         //if you want the bot to start the conversation after restart
-        custom_action_tigger();
+        // custom_action_tigger();
         return;
       }
       setBotResponse(botResponse);
@@ -236,7 +243,7 @@ function setBotResponse(response) {
     hideBotTyping();
     if (response.length < 1) {
       //if there is no response from Rasa, send  fallback message to the user
-      var fallbackMsg = "I am facing some issues, please try again later!!!";
+      var fallbackMsg = "Estoy teniendo unos problemas, si esto se repite, haga clic en los tres puntos y en reiniciar!";
 
       var BotResponse =
         '<img class="botAvatar" src="./static/img/sara_avatar.png"/><p class="botMsg">' +
@@ -251,9 +258,10 @@ function setBotResponse(response) {
         //check if the response contains "text"
         if (response[i].hasOwnProperty("text")) {
           if (response[i].text != null) {
+            var contentMsg = response[i].text.replace(/\n/g, "<br />");
             var BotResponse =
               '<img class="botAvatar" src="./static/img/sara_avatar.png"/><p class="botMsg">' +
-              response[i].text +
+              contentMsg +
               '</p><div class="clearfix"></div>';
             $(BotResponse).appendTo(".chats").hide().fadeIn(1000);
           }
